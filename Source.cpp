@@ -55,7 +55,7 @@ public:
 			cout << endl;
 			form = path_alph;
 			form = form.substr(form.size() - 5);
-			if (form == ".key")
+			if (form == ".alph")
 			{
 				bool trig = 0;
 				if (fileNOopen(path_alph))
@@ -198,7 +198,7 @@ public:
 					cout << endl;
 					form = path_cipher;
 					form = form.substr(form.size() - 8);
-					if (form == ".key")
+					if (form == ".encrypt")
 					{
 						cout << "Enter the path to the file with text:" << "\t";
 						cin >> path_txt;
@@ -787,7 +787,7 @@ public:
 							cout << endl;
 							form = path_deciph;
 							form = form.substr(form.size() - 4);
-							if (form == ".key")
+							if (form == ".txt")
 							{
 								ofstream file_deciph(path_deciph);
 								ifstream file_ciph(path_cipher);
@@ -914,8 +914,10 @@ private:
 public:
 	void key_gen() override
 	{
+		srand(time(NULL));
 		string path_key;
 		string path_alph;
+		string path_txt;
 		cout << "Enter the path to the file to save the key:" << "\t";
 		cin >> path_key;
 		cout << endl;
@@ -953,70 +955,70 @@ public:
 							array_alph.push_back(it[0]);
 							iter++;
 						}
-						
-						string data;
-						for (int i = 0; i < array_alph.size(); i++)
+						cout << "Enter the path to the file with text:" << "\t";
+						cin >> path_txt;
+						cout << endl;
+						form = path_txt;
+						form = form.substr(form.size() - 4);
+						if (form == ".txt")
 						{
-							srand(time(NULL));
-							int ran = rand() % 58 + 65;
-
-							if (ran == 91 || ran == 92 || ran == 93 || ran == 94 || ran == 95 || ran == 96)
+							bool trig = 0;
+							if (fileNOopen(path_txt))
 							{
-								i--;
+								trig = 1;
+							}
+							if (trig == 0)
+							{
+								ofstream file_key(path_key);
+								ifstream file_txt(path_txt);
+								json key = { {"cipher type", "gamming"},{"key",{}} };
+								int count = 0;
+								int coun = 0;
+								int keep;
+
+								while (!file_txt.eof())
+								{
+									string str;
+									string str1;
+									string check;
+									string word;
+									int size = 0;
+									file_txt >> str;
+									vector<int>key_arr;
+									for (int i = 0; i < str.size(); i++)
+									{
+										for (int j = 0; j < array_alph.size(); j++)
+										{
+											if (str[i] == array_alph[j])
+											{
+												size++;
+											}
+										}
+									}
+									for (int i = 0; i < size; i++)
+									{
+										int ran = rand() % 52 + 1;
+										key_arr.push_back(ran);
+									}
+
+									key.at("key").push_back(key_arr);
+								}
+
+
+								file_key << key;
+								file_key.close();
+								file_txt.close();
+
 							}
 							else
 							{
-								if (i != 0)
-								{
-
-									for (int j = 0; j < data.size(); j++)
-									{
-
-										if (data[j] == ran)
-										{
-											ran = rand() % 58 + 65;
-
-											j = -1;
-											continue;
-										}
-										if (ran == 91 || ran == 92 || ran == 93 || ran == 94 || ran == 95 || ran == 96)
-										{
-											ran = rand() % 58 + 65;
-
-											j = -1;
-										}
-
-									}
-
-									data.push_back(ran);
-								}
-								else
-								{
-									data.push_back(ran);
-								}
+								cout << "ERROR" << endl;
 							}
-						}
-						json key = { {"cipher type", "gamming"}, {"key",{}} };
-						for (int i = 0; i < array_alph.size(); i++)
-						{
-							string sim1;
-							string sim2;
-							sim1.push_back(array_alph[i]);
-							sim2.push_back(data[i]);
-							key.at("key").push_back(json::array({ sim1,sim2 }));
-
-						}
-						ofstream key_file(path_key);
-						if (key_file.is_open())
-						{
-							key_file << key;
-							cout << "Key generated successfully" << endl;
 						}
 						else
 						{
-							cout << "ERROR" << endl;
+							cout << "ERROR. Check the path to the text" << endl;
 						}
-						key_file.close();
 					}
 					else
 					{
@@ -1032,8 +1034,6 @@ public:
 			{
 				cout << "ERROR. Check the path to the alphabet" << endl;
 			}
-
-
 		}
 		else
 		{
@@ -1045,6 +1045,7 @@ public:
 	void encrypt() override
 	{
 		string path_key;
+		string path_alph;
 		string path_txt;
 		string path_cipher;
 		cout << "Enter the path to the file with the key:" << "\t";
@@ -1070,107 +1071,161 @@ public:
 				file.close();
 				if (key.find("cipher type").value() == "gamming")
 				{
-					cout << "Enter the path to the file to save the cipher:" << "\t";
-					cin >> path_cipher;
+					cout << "Enter the path to the alphabet:" << "\t";
+					cin >> path_alph;
 					cout << endl;
-					form = path_cipher;
-					form = form.substr(form.size() - 8);
-					if (path_cipher.find(".encrypt") != -1)
+					form = path_alph;
+					form = form.substr(form.size() - 5);
+					if (form == ".alph")
 					{
-						cout << "Enter the path to the file with text:" << "\t";
-						cin >> path_txt;
-						cout << endl;
-						form = path_txt;
-						form = form.substr(form.size() - 4);
-						if (form == ".txt")
+						bool trig = 0;
+						if (fileNOopen(path_alph))
 						{
-							if (fileNOopen(path_txt))
+							trig = 1;
+						}
+						if (trig == 0)
+						{
+							ifstream file_alph(path_alph);
+							json alph;
+							file_alph >> alph;
+							file_alph.close();
+							if (alph.find("alph") != alph.end())
 							{
-								trig = 1;
-							}
-							if (trig == 0)
-							{
-								ofstream file_ciph(path_cipher);
-								ifstream file_text(path_txt);
-								while (!file_text.eof())
+								string array_alph;
+								json data_a = alph.at("alph");
+								json::iterator iter = data_a.begin();
+								for (int i = 0; i < alph.at("alph").size(); i++)
 								{
-									string str;
-									getline(file_text, str);
-									for (int i = 0; i < str.size(); i++)
-									{
-										string sim;
-										int txt_sim;
-										sim.push_back(str[i]);
-										int count;
-
-										for (int j = 0; j < key.at("key").size(); j++)
-										{
-											count = j;
-											if (sim == key.at("key").at(j).at(0))
-											{
-												txt_sim = j;
-												break;
-											}
-
-										}
-										int key_sim;
-										if (sim == key.at("key").at(count).at(0))
-										{
-											string sim2;
-											if (i >= key.at("key").size())
-											{
-												int idx = i % key.at("key").size();
-												sim2 = key.at("key").at(idx).at(1);
-												for (int j = 0; j < key.at("key").size(); j++)
-												{
-													if (sim2 == key.at("key").at(j).at(0))
-													{
-														key_sim = j;
-														break;
-													}
-												}
-
-											}
-											else
-											{
-												sim2 = key.at("key").at(i).at(1);
-												for (int j = 0; j < key.at("key").size(); j++)
-												{
-													if (sim2 == key.at("key").at(j).at(0))
-													{
-														key_sim = j;
-														break;
-													}
-												}
-											}
-											int summa = key_sim + txt_sim;
-											int position = summa % key.at("key").size();
-											string code_sim = key.at("key").at(position).at(0);
-											str[i] = code_sim[0];
-										}
-
-									}
-									file_ciph << str;
-									file_ciph << endl;
-
+									string it = *iter;
+									array_alph.push_back(it[0]);
+									iter++;
 								}
+								cout << "Enter the path to the file to save the cipher:" << "\t";
+								cin >> path_cipher;
+								cout << endl;
+								form = path_cipher;
+								form = form.substr(form.size() - 8);
+								if (form == ".encrypt")
+								{
+									cout << "Enter the path to the file with text:" << "\t";
+									cin >> path_txt;
+									cout << endl;
+									form = path_txt;
+									form = form.substr(form.size() - 4);
+									if (form == ".txt")
+									{
+										if (fileNOopen(path_txt))
+										{
+											trig = 1;
+										}
+										if (trig == 0)
+										{
+											ofstream file_ciph(path_cipher);
+											ifstream file_text(path_txt);
+											int counter = 0;
+											while (!file_text.eof())
+											{
+												string str;
+												string str2;
+												string space = " ";
 
-								file_ciph.close();
-								file_text.close();
+												int count = 0;
+												int coun = 0;
+
+												int keep;
+												getline(file_text, str);
+												str2 = str;
+												if (str2 != "")
+												{
+													for (int i = 0; i < key.at("key").size(); i++)
+													{
+														i = counter;
+														counter++;
+														string str3;
+
+														for (int j = 0; j < str2.size(); j++)
+														{
+															j = coun;
+															if (str2[coun] != space[0])
+															{
+																str3.push_back(str2[coun]);
+															}
+															else
+															{
+																coun++;
+																break;
+															}
+															coun++;
+															keep = coun;
+														}
+
+														int idx = 0;
+														for (int j = 0; j < str3.size(); j++)
+														{
+															for (int k = 0; k < array_alph.size(); k++)
+															{
+																if (str3[j] == array_alph[k])
+																{
+																	int sum = k + key.at("key").at(i).at(idx);
+																	int position = sum % array_alph.size();
+																	str3[j] = array_alph[position];
+																	idx++;
+																	break;
+																}
+															}
+														}
+														for (int j = 0; j < str3.size(); j++)
+														{
+
+															str[count] = str3[j];
+
+
+															count++;
+														}
+														count++;
+														if (keep == str2.size())
+														{
+															break;
+														}
+
+													}
+													file_ciph << str;
+													file_ciph << endl;
+												}
+
+											}
+
+											file_ciph.close();
+											file_text.close();
+										}
+										else
+										{
+											cout << "ERROR" << endl;
+										}
+									}
+									else
+									{
+										cout << "ERROR. Check the path to the text" << endl;
+									}
+								}
+								else
+								{
+									cout << "ERROR. Check the path to the cipher" << endl;
+								}
 							}
 							else
 							{
-								cout << "ERROR" << endl;
+								cout << "ERROR. The alphabet is set incorrectly" << endl;
 							}
 						}
 						else
 						{
-							cout << "ERROR. Check the path to the text" << endl;
+							cout << "ERROR" << endl;
 						}
 					}
 					else
 					{
-						cout << "ERROR. Check the path to the cipher" << endl;
+						cout << "ERROR. Check the path to the alphabet" << endl;
 					}
 				}
 				else
@@ -1192,6 +1247,7 @@ public:
 	void decrypt() override
 	{
 		string path_key;
+		string path_alph;
 		string path_deciph;
 		string path_cipher;
 		cout << "Enter the path to the file with the key:" << "\t";
@@ -1207,111 +1263,172 @@ public:
 			{
 				trig = 1;
 			}
+
 			if (trig == 0)
 			{
+
 				ifstream file(path_key);
 				json key;
 				file >> key;
 				file.close();
 				if (key.find("cipher type").value() == "gamming")
 				{
-					cout << "Enter the path to the file with the cipher:" << "\t";
-					cin >> path_cipher;
+					cout << "Enter the path to the alphabet:" << "\t";
+					cin >> path_alph;
 					cout << endl;
-					form = path_cipher;
-					form = form.substr(form.size() - 8);
-					if (form == ".encrypt")
+					form = path_alph;
+					form = form.substr(form.size() - 5);
+					if (form == ".alph")
 					{
-						if (fileNOopen(path_cipher))
+						bool trig = 0;
+						if (fileNOopen(path_alph))
 						{
 							trig = 1;
 						}
 						if (trig == 0)
 						{
-							cout << "Enter the path to the file to save the text:" << "\t";
-							cin >> path_deciph;
-							cout << endl;
-							form = path_deciph;
-							form = form.substr(form.size() - 4);
-							if (form == ".txt")
+							ifstream file_alph(path_alph);
+							json alph;
+							file_alph >> alph;
+							file_alph.close();
+							if (alph.find("alph") != alph.end())
 							{
-								ofstream file_deciph(path_deciph);
-								ifstream file_ciph(path_cipher);
-
-								while (!file_ciph.eof())
+								string array_alph;
+								json data_a = alph.at("alph");
+								json::iterator iter = data_a.begin();
+								for (int i = 0; i < alph.at("alph").size(); i++)
 								{
-									string str;
-									getline(file_ciph, str);
-									for (int i = 0; i < str.size(); i++)
+									string it = *iter;
+									array_alph.push_back(it[0]);
+									iter++;
+								}
+								cout << "Enter the path to the file to save the text:" << "\t";
+								cin >> path_deciph;
+								cout << endl;
+								form = path_deciph;
+								form = form.substr(form.size() - 4);
+								if (form == ".txt")
+								{
+									cout << "Enter the path to the file with cipher:" << "\t";
+									cin >> path_cipher;
+									cout << endl;
+									form = path_cipher;
+									form = form.substr(form.size() - 8);
+									if (form == ".encrypt")
 									{
-										string sim;
-										int ciph_sim;
-										sim.push_back(str[i]);
-										int count;
-										for (int j = 0; j < key.at("key").size(); j++)
+										if (fileNOopen(path_cipher))
 										{
-											count = j;
-											if (sim == key.at("key").at(j).at(0))
-											{
-												ciph_sim = j;
-												break;
-											}
-
+											trig = 1;
 										}
-										int key_sim;
-										if (sim == key.at("key").at(count).at(0))
+										if (trig == 0)
 										{
-											string sim2;
-											if (i >= key.at("key").size())
+											ofstream file_deciph(path_deciph);
+											ifstream file_ciph(path_cipher);
+											int counter = 0;
+											while (!file_ciph.eof())
 											{
-												int idx = i % key.at("key").size();
-												sim2 = key.at("key").at(idx).at(1);
-												for (int j = 0; j < key.at("key").size(); j++)
+												string str;
+												string str2;
+												string space = " ";
+
+												int count = 0;
+												int coun = 0;
+
+												int keep;
+												getline(file_ciph, str);
+												str2 = str;
+												if (str2 != "")
 												{
-													if (sim2 == key.at("key").at(j).at(0))
+													for (int i = 0; i < key.at("key").size(); i++)
 													{
-														key_sim = j;
-														break;
+														i = counter;
+														counter++;
+														string str3;
+
+														for (int j = 0; j < str2.size(); j++)
+														{
+															j = coun;
+															if (str2[coun] != space[0])
+															{
+																str3.push_back(str2[coun]);
+															}
+															else
+															{
+																coun++;
+																break;
+															}
+															coun++;
+															keep = coun;
+														}
+
+														int idx = 0;
+														for (int j = 0; j < str3.size(); j++)
+														{
+															for (int k = 0; k < array_alph.size(); k++)
+															{
+																if (str3[j] == array_alph[k])
+																{
+																	int sum = k - key.at("key").at(i).at(idx) + array_alph.size();
+																	int position = sum % array_alph.size();
+																	str3[j] = array_alph[position];
+																	idx++;
+																	break;
+																}
+															}
+														}
+														for (int j = 0; j < str3.size(); j++)
+														{
+
+															str[count] = str3[j];
+
+
+															count++;
+														}
+														count++;
+														if (keep == str2.size())
+														{
+															break;
+														}
+
 													}
+													file_deciph << str;
+													file_deciph << endl;
 												}
 
 											}
-											else
-											{
-												sim2 = key.at("key").at(i).at(1);
-												for (int j = 0; j < key.at("key").size(); j++)
-												{
-													if (sim2 == key.at("key").at(j).at(0))
-													{
-														key_sim = j;
-														break;
-													}
-												}
-											}
-											int summa = key.at("key").size() + ciph_sim - key_sim;
-											int position = summa % key.at("key").size();
-											string code_sim = key.at("key").at(position).at(0);
-											str[i] = code_sim[0];
+
+											file_ciph.close();
+											file_deciph.close();
+										}
+										else
+										{
+											cout << "ERROR" << endl;
 										}
 									}
-									file_deciph << str;
-									file_deciph << endl;
+									else
+									{
+										cout << "ERROR. Check the path to the cipher" << endl;
+									}
 								}
-								file_deciph.close();
-								file_ciph.close();
+								else
+								{
+									cout << "ERROR. Check the path to the decipher" << endl;
+								}
 							}
 							else
 							{
-								cout << "ERROR. Check the path to the text" << endl;
+								cout << "ERROR. The alphabet is set incorrectly" << endl;
 							}
+						}
+						else
+						{
+							cout << "ERROR" << endl;
 						}
 					}
 					else
 					{
 						cout << "ERROR. Check the path to the alphabet" << endl;
 					}
-						
-					
 				}
 				else
 				{
