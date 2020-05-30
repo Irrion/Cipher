@@ -41,6 +41,7 @@ private:
 public:
 	void key_gen() override
 	{
+		srand(time(NULL));
 		string path_key;
 		string path_alph;
 		cout << "Enter the path to the file to save the key:" << "\t";
@@ -83,7 +84,7 @@ public:
 						string data;
 						for (int i = 0; i < array_alph.size(); i++)
 						{
-							srand(time(NULL));
+							
 							int ran = rand() % 58 + 65;
 
 							if (ran == 91 || ran == 92 || ran == 93 || ran == 94 || ran == 95 || ran == 96)
@@ -215,41 +216,36 @@ public:
 							{
 								ofstream file_ciph(path_cipher);
 								ifstream file_text(path_txt);
-								if (file_text.is_open())
+								
+								while (!file_text.eof())
 								{
-									while (!file_text.eof())
+									string str1;
+									getline(file_text, str1);
+									for (int i = 0; i < str1.size(); i++)
 									{
-										string str1;
-										getline(file_text, str1);
-										for (int i = 0; i < str1.size(); i++)
+										string str2;
+										str2.push_back(str1[i]);
+										if (str2 != " ")
 										{
-											string str2;
-											str2.push_back(str1[i]);
-											if (str2 != " ")
+											for (int j = 0; j < key.at("key").size(); j++)
 											{
-												for (int j = 0; j < key.at("key").size(); j++)
+												if (str2 == key.at("key").at(j).at(0))
 												{
-													if (str2 == key.at("key").at(j).at(0))
-													{
-														string keep;
-														keep = key.at("key").at(j).at(1);
-														str1[i] = keep[0];
+													string keep;
+													keep = key.at("key").at(j).at(1);
+													str1[i] = keep[0];
 
-														break;
-													}
+													break;
 												}
 											}
-
 										}
-										file_ciph << str1;
-										file_ciph << endl;
-									}
 
+									}
+									file_ciph << str1;
+									file_ciph << endl;
 								}
-								else
-								{
-									cout << "ERROR" << endl;
-								}
+
+							
 							}
 							else
 							{
@@ -327,7 +323,7 @@ public:
 							cout << "Enter the path to the file to save the text:" << "\t";
 							cin >> path_deciph;
 							cout << endl;
-							form = path_cipher;
+							form = path_deciph;
 							form = form.substr(form.size() - 4);
 							if (form == ".txt")
 							{
@@ -428,6 +424,7 @@ private:
 public:
 	void key_gen() override
 	{
+		srand(time(NULL));
 		string path_key;
 		string path_txt;
 		cout << "Enter the path to the file to save the key:" << "\t";
@@ -463,8 +460,7 @@ public:
 					{
 						string str;
 						string str1;
-						string check;
-						string word;
+						
 
 						file_txt >> str;
 
@@ -486,7 +482,7 @@ public:
 						}
 						for (int i = 0; i < size / 2; i++)
 						{
-							srand(time(NULL));
+							
 							int ran = rand() % str.size() + 1;
 							if (ran != i + 1)
 							{
@@ -509,36 +505,20 @@ public:
 									bool che = 0;
 									for (int j = 0; j < key_arr.size(); j++)
 									{
-										if (str.size() % 2 == 0)
+										
+										if (key_arr[j] == 0 && j + 1 != ran)
 										{
-											if (key_arr[j] == 0 && j + 1 != ran)
-											{
-												key_arr[j] = ran;
-												key_arr[ran - 1] = j + 1;
-												break;
-											}
-											else if (key_arr[j] == 0 && j + 1 == ran)
-											{
-												che = 1;
-												i--;
-												break;
-											}
+											key_arr[j] = ran;
+											key_arr[ran - 1] = j + 1;
+											break;
 										}
-										else
+										else if (key_arr[j] == 0 && j + 1 == ran)
 										{
-											if (key_arr[j] == 0 && j + 1 != ran)
-											{
-												key_arr[j] = ran;
-												key_arr[ran - 1] = j + 1;
-												break;
-											}
-											else if (key_arr[j] == 0 && j + 1 == ran)
-											{
-												che = 1;
-												i--;
-												break;
-											}
+											che = 1;
+											i--;
+											break;
 										}
+									
 									}
 									if (che = 1)
 									{
@@ -980,8 +960,7 @@ public:
 								{
 									string str;
 									string str1;
-									string check;
-									string word;
+									
 									int size = 0;
 									file_txt >> str;
 									vector<int>key_arr;
