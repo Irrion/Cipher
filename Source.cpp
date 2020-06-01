@@ -9,7 +9,7 @@
 using namespace std;
 using json = nlohmann::json;
 
-class cipher 
+class interface
 {
 public:
 	virtual void key_gen() = 0;
@@ -17,7 +17,7 @@ public:
 	virtual void decrypt() = 0;
 };
 
-class replacement:public cipher
+class replacement:public interface
 {
 private:
 	bool fileNOopen(string Path)
@@ -221,7 +221,6 @@ public:
 								file_ciph << "///////////////////";
 								file_ciph << endl;
 								ifstream file_text(path_txt);
-								
 								while (!file_text.eof())
 								{
 									string str1;
@@ -420,7 +419,7 @@ public:
 	}
 };
 
-class transposition : public cipher
+class transposition : public interface
 {
 private:
 	bool fileNOopen(string Path)
@@ -911,7 +910,7 @@ public:
 	}
 };
 
-class gamming : public cipher
+class gamming : public interface
 {
 private:
 	bool fileNOopen(string Path)
@@ -1489,8 +1488,26 @@ public:
 	}
 };
 
+class cipher
+{
+public:
+	void key_gen(interface * x)
+	{
+		x->key_gen();
+	}
+	void encrypt(interface * x)
+	{
+		x->encrypt();
+	}
+	void decrypt(interface * x)
+	{
+		x->decrypt();
+	}
+};
 int main()
 {
+	cipher ch;
+
 	int a;
 	cout << "Main menu" << endl;
 	cout << "1)Encrypt/Decrypt" << endl << "2)Key generation" << endl;
@@ -1506,19 +1523,19 @@ int main()
 			cin >> a;
 			if (a == 1)
 			{
-				replacement x;
+				replacement re;
 
-				x.encrypt();
+				ch.encrypt(&re);
 			}
 			else if (a == 2)
 			{
-				transposition x;
-				x.encrypt();
+				transposition tra;
+				ch.encrypt(&tra);
 			}
 			else if (a == 3)
 			{
-				gamming x;
-				x.encrypt();
+				gamming gam;
+				ch.encrypt(&gam);
 			}
 			else if (a != 1 && a != 2 && a != 3)
 			{
@@ -1532,18 +1549,18 @@ int main()
 			cin >> a;
 			if (a == 1)
 			{
-				replacement x;
-				x.decrypt();
+				replacement re;
+				ch.decrypt(&re);
 			}
 			else if (a == 2)
 			{
-				transposition x;
-				x.decrypt();
+				transposition tra;
+				ch.decrypt(&tra);
 			}
 			else if (a == 3)
 			{
-				gamming x;
-				x.decrypt();
+				gamming gam;
+				ch.decrypt(&gam);
 			}
 			else if (a != 1 && a != 2 && a != 3)
 			{
@@ -1562,19 +1579,19 @@ int main()
 		cin >> a;
 		if (a == 1)
 		{
-			replacement x;
+			replacement re;
 			
-			x.key_gen();
+			ch.key_gen(&re);
 		}
 		else if (a == 2)
 		{
-			transposition x;
-			x.key_gen();
+			transposition tra;
+			ch.key_gen(&tra);
 		}
 		else if (a == 3)
 		{
-			gamming x;
-			x.key_gen();
+			gamming gam;
+			ch.key_gen(&gam);
 		}
 		else if (a != 1 && a != 2 && a != 3)
 		{
