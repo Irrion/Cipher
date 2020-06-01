@@ -201,6 +201,7 @@ public:
 					form = form.substr(form.size() - 8);
 					if (form == ".encrypt")
 					{
+						
 						cout << "Enter the path to the file with text:" << "\t";
 						cin >> path_txt;
 						cout << endl;
@@ -215,6 +216,10 @@ public:
 							if (trig == 0)
 							{
 								ofstream file_ciph(path_cipher);
+								file_ciph << "cipher type: replacement";
+								file_ciph << endl;
+								file_ciph << "///////////////////";
+								file_ciph << endl;
 								ifstream file_text(path_txt);
 								
 								while (!file_text.eof())
@@ -320,55 +325,70 @@ public:
 						}
 						if (trig == 0)
 						{
-							cout << "Enter the path to the file to save the text:" << "\t";
-							cin >> path_deciph;
-							cout << endl;
-							form = path_deciph;
-							form = form.substr(form.size() - 4);
-							if (form == ".txt")
+							string check;
+							ifstream file_check(path_cipher);
+							getline(file_check, check);
+							if (check.find("replacement") != -1)
 							{
-								ofstream file_deciph(path_deciph);
-								ifstream file_ciph(path_cipher);
-								if (file_ciph.is_open())
+								cout << "Enter the path to the file to save the text:" << "\t";
+								cin >> path_deciph;
+								cout << endl;
+								form = path_deciph;
+								form = form.substr(form.size() - 4);
+								if (form == ".txt")
 								{
-									while (!file_ciph.eof())
+									ofstream file_deciph(path_deciph);
+									ifstream file_ciph(path_cipher);
+									if (file_ciph.is_open())
 									{
-										string str1;
-										getline(file_ciph, str1);
-										for (int i = 0; i < str1.size(); i++)
+										while (!file_ciph.eof())
 										{
-											string str2;
-											str2.push_back(str1[i]);
-											if (str2 != " ")
+											string type = "cipher type: replacement";
+											string str1;
+											getline(file_ciph, str1);
+											if (str1 == type || str1 == "///////////////////")
 											{
-												for (int j = 0; j < key.at("key").size(); j++)
+												continue;
+											}
+											for (int i = 0; i < str1.size(); i++)
+											{
+												string str2;
+												str2.push_back(str1[i]);
+												if (str2 != " ")
 												{
-													if (str2 == key.at("key").at(j).at(1))
+													for (int j = 0; j < key.at("key").size(); j++)
 													{
-														string keep;
-														keep = key.at("key").at(j).at(0);
-														str1[i] = keep[0];
+														if (str2 == key.at("key").at(j).at(1))
+														{
+															string keep;
+															keep = key.at("key").at(j).at(0);
+															str1[i] = keep[0];
 
-														break;
+															break;
+														}
 													}
 												}
-											}
 
+											}
+											file_deciph << str1;
+											file_deciph << endl;
 										}
-										file_deciph << str1;
-										file_deciph << endl;
 									}
+									else
+									{
+										cout << "ERROR" << endl;
+									}
+									file_deciph.close();
+									file_ciph.close();
 								}
 								else
 								{
-									cout << "ERROR" << endl;
+									cout << "ERROR. Check the path to the text" << endl;
 								}
-								file_deciph.close();
-								file_ciph.close();
 							}
 							else
 							{
-								cout << "ERROR. Check the path to the text" << endl;
+								cout << "Incorrect encryption type" << endl;
 							}
 						}
 						else
@@ -614,6 +634,10 @@ public:
 							if (trig == 0)
 							{
 								ofstream file_ciph(path_cipher);
+								file_ciph << "cipher type: transposition";
+								file_ciph << endl;
+								file_ciph << "///////////////////";
+								file_ciph << endl;
 								ifstream file_text(path_txt);
 								int counter = 0;
 								while (!file_text.eof())
@@ -679,9 +703,10 @@ public:
 											}
 
 										}
-										file_ciph << str;
-										file_ciph << endl;
+										
 									}
+									file_ciph << str;
+									file_ciph << endl;
 								}
 
 								file_ciph.close();
@@ -762,80 +787,96 @@ public:
 						}
 						if (trig == 0)
 						{
-							cout << "Enter the path to the file to save the text:" << "\t";
-							cin >> path_deciph;
-							cout << endl;
-							form = path_deciph;
-							form = form.substr(form.size() - 4);
-							if (form == ".txt")
+							string check;
+							ifstream file_check(path_cipher);
+							getline(file_check, check);
+							if (check.find("transposition") != -1)
 							{
-								ofstream file_deciph(path_deciph);
-								ifstream file_ciph(path_cipher);
-								int counter = 0;
-								while (!file_ciph.eof())
+								cout << "Enter the path to the file to save the text:" << "\t";
+								cin >> path_deciph;
+								cout << endl;
+								form = path_deciph;
+								form = form.substr(form.size() - 4);
+								if (form == ".txt")
 								{
-									string str;
-									string str2;
-									string space = " ";
-									int count = 0;
-									int coun = 0;
-									int keep;
-									getline(file_ciph, str);
-									str2 = str;
-									if (str2 != "")
+									ofstream file_deciph(path_deciph);
+									ifstream file_ciph(path_cipher);
+									int counter = 0;
+									while (!file_ciph.eof())
 									{
-										for (int i = 0; i < key.at("key").size(); i++)
+										string type = "cipher type: transposition";
+										string str;
+										string str2;
+										string space = " ";
+										int count = 0;
+										int coun = 0;
+										int keep;
+										getline(file_ciph, str);
+										if (str == type || str == "///////////////////")
 										{
-											i = counter;
-											counter++;
-											string str3;
-											string str4;
-											for (int j = 0; j < str2.size(); j++)
+											continue;
+										}
+										str2 = str;
+										if (str2 != "")
+										{
+											for (int i = 0; i < key.at("key").size(); i++)
 											{
-												j = coun;
-												if (str2[coun] != space[0])
+												i = counter;
+												counter++;
+												string str3;
+												string str4;
+												for (int j = 0; j < str2.size(); j++)
 												{
-													str3.push_back(str2[coun]);
-												}
-												else
-												{
+													j = coun;
+													if (str2[coun] != space[0])
+													{
+														str3.push_back(str2[coun]);
+													}
+													else
+													{
+														coun++;
+														break;
+													}
 													coun++;
+													keep = coun;
+												}
+												str4 = str3;
+												for (int j = 0; j < str3.size(); j++)
+												{
+													int a = key.at("key").at(i).at(j);
+													if (a == 0)
+													{
+														continue;;
+													}
+													str3[j] = str4[a - 1];
+												}
+												for (int j = 0; j < str3.size(); j++)
+												{
+													str[count] = str3[j];
+													count++;
+												}
+												count++;
+												if (keep == str2.size())
+												{
 													break;
 												}
-												coun++;
-												keep = coun;
 											}
-											str4 = str3;
-											for (int j = 0; j < str3.size(); j++)
-											{
-												int a = key.at("key").at(i).at(j);
-												if (a == 0)
-												{
-													continue;;
-												}
-												str3[j] = str4[a - 1];
-											}
-											for (int j = 0; j < str3.size(); j++)
-											{
-												str[count] = str3[j];
-												count++;
-											}
-											count++;
-											if (keep == str2.size())
-											{
-												break;
-											}
+											
 										}
 										file_deciph << str;
 										file_deciph << endl;
 									}
+									file_deciph.close();
+									file_ciph.close();
 								}
-								file_deciph.close();
-								file_ciph.close();
+								else
+								{
+									cout << "ERROR. Check the path to the text" << endl;
+								}
 							}
 							else
 							{
-								cout << "ERROR. Check the path to the text" << endl;
+								cout<< "Incorrect encryptin type" << endl;
 							}
 						}
 						else
@@ -1100,6 +1141,10 @@ public:
 										if (trig == 0)
 										{
 											ofstream file_ciph(path_cipher);
+											file_ciph << "cipher type: gamming";
+											file_ciph << endl;
+											file_ciph << "///////////////////";
+											file_ciph << endl;
 											ifstream file_text(path_txt);
 											int counter = 0;
 											while (!file_text.eof())
@@ -1168,10 +1213,10 @@ public:
 														}
 
 													}
-													file_ciph << str;
-													file_ciph << endl;
+													
 												}
-
+												file_ciph << str;
+												file_ciph << endl;
 											}
 
 											file_ciph.close();
@@ -1281,117 +1326,135 @@ public:
 									array_alph.push_back(it[0]);
 									iter++;
 								}
-								cout << "Enter the path to the file to save the text:" << "\t";
-								cin >> path_deciph;
+								cout << "Enter the path to the file with cipher:" << "\t";
+								cin >> path_cipher;
 								cout << endl;
-								form = path_deciph;
-								form = form.substr(form.size() - 4);
-								if (form == ".txt")
+								form = path_cipher;
+								form = form.substr(form.size() - 8);
+								if (form == ".encrypt")
 								{
-									cout << "Enter the path to the file with cipher:" << "\t";
-									cin >> path_cipher;
-									cout << endl;
-									form = path_cipher;
-									form = form.substr(form.size() - 8);
-									if (form == ".encrypt")
+									if (fileNOopen(path_cipher))
 									{
-										if (fileNOopen(path_cipher))
+										trig = 1;
+									}
+									if (trig == 0)
+									{
+										string check;
+										ifstream file_check(path_cipher);
+										getline(file_check, check);
+										if (check.find("gamming") != -1)
 										{
-											trig = 1;
-										}
-										if (trig == 0)
-										{
-											ofstream file_deciph(path_deciph);
-											ifstream file_ciph(path_cipher);
-											int counter = 0;
-											while (!file_ciph.eof())
+											cout << "Enter the path to the file to save the text:" << "\t";
+											cin >> path_deciph;
+											cout << endl;
+											form = path_deciph;
+											form = form.substr(form.size() - 4);
+											if (form == ".txt")
 											{
-												string str;
-												string str2;
-												string space = " ";
 
-												int count = 0;
-												int coun = 0;
+												ofstream file_deciph(path_deciph);
 
-												int keep;
-												getline(file_ciph, str);
-												str2 = str;
-												if (str2 != "")
+												ifstream file_ciph(path_cipher);
+												int counter = 0;
+												while (!file_ciph.eof())
 												{
-													for (int i = 0; i < key.at("key").size(); i++)
+													string type = "cipher type: gamming";
+													string str;
+													string str2;
+													string space = " ";
+
+													int count = 0;
+													int coun = 0;
+
+													int keep;
+													getline(file_ciph, str);
+													if (str == type || str == "///////////////////")
 													{
-														i = counter;
-														counter++;
-														string str3;
-
-														for (int j = 0; j < str2.size(); j++)
+														continue;
+													}
+													str2 = str;
+													if (str2 != "")
+													{
+														for (int i = 0; i < key.at("key").size(); i++)
 														{
-															j = coun;
-															if (str2[coun] != space[0])
-															{
-																str3.push_back(str2[coun]);
-															}
-															else
-															{
-																coun++;
-																break;
-															}
-															coun++;
-															keep = coun;
-														}
+															i = counter;
+															counter++;
+															string str3;
 
-														int idx = 0;
-														for (int j = 0; j < str3.size(); j++)
-														{
-															for (int k = 0; k < array_alph.size(); k++)
+															for (int j = 0; j < str2.size(); j++)
 															{
-																if (str3[j] == array_alph[k])
+																j = coun;
+																if (str2[coun] != space[0])
 																{
-																	int sum = k - key.at("key").at(i).at(idx) + array_alph.size();
-																	int position = sum % array_alph.size();
-																	str3[j] = array_alph[position];
-																	idx++;
+																	str3.push_back(str2[coun]);
+																}
+																else
+																{
+																	coun++;
 																	break;
 																}
+																coun++;
+																keep = coun;
 															}
-														}
-														for (int j = 0; j < str3.size(); j++)
-														{
 
-															str[count] = str3[j];
+															int idx = 0;
+															for (int j = 0; j < str3.size(); j++)
+															{
+																for (int k = 0; k < array_alph.size(); k++)
+																{
+																	if (str3[j] == array_alph[k])
+																	{
+																		int sum = k - key.at("key").at(i).at(idx) + array_alph.size();
+																		int position = sum % array_alph.size();
+																		str3[j] = array_alph[position];
+																		idx++;
+																		break;
+																	}
+																}
+															}
+															for (int j = 0; j < str3.size(); j++)
+															{
+
+																str[count] = str3[j];
 
 
+																count++;
+															}
 															count++;
-														}
-														count++;
-														if (keep == str2.size())
-														{
-															break;
-														}
+															if (keep == str2.size())
+															{
+																break;
+															}
 
+														}
+														
 													}
 													file_deciph << str;
 													file_deciph << endl;
 												}
 
-											}
+												file_ciph.close();
+												file_deciph.close();
 
-											file_ciph.close();
-											file_deciph.close();
+											}
+											else
+											{
+												cout << "ERROR. Check the path to the decipher" << endl;
+											}
 										}
 										else
 										{
-											cout << "ERROR" << endl;
+											cout << "Incorrect encryption type" << endl;
 										}
 									}
 									else
 									{
-										cout << "ERROR. Check the path to the cipher" << endl;
+										cout << "ERROR" << endl;
 									}
 								}
 								else
 								{
-									cout << "ERROR. Check the path to the decipher" << endl;
+									cout << "ERROR. Check the path to the cipher" << endl;
 								}
 							}
 							else
@@ -1522,7 +1585,18 @@ int main()
 	{
 		cout << "Incorrect option" << endl;
 	}
+	
+	//string t = "Omae wa";
+	//string m = "Mao";
+	//ofstream file("1.txt");
+	//file << t;
+	//file << endl;
+	//file << "";
+	//file << endl;
+	//file << m;
+	//file.close();
 
+	
 
 	system("pause");
 	return 0;
