@@ -38,33 +38,7 @@ private:
 		return noOpen;
 	}
 
-	//bool path(string Path)
-	//{
-	//	bool eng;
-	//	string tx = Path;
-	//	
-	//	for (int i = 0; i < tx.size(); i++)
-	//	{
-	//		if (tx[i] == '.'&& i!=0)
-	//		{
-	//			break;
-	//		}
-	//		else if(tx[i] == '.'&& i == 0)
-	//		{
-	//			eng = true;
-	//		}
-	//		//////////////////////////////////////////////////
-	//		if (64 < tx[i] < 90 || 96 < tx[i] < 123)
-	//		{
-	//			eng = false;
-	//		}
-	//		else
-	//		{
-	//			eng = true;
-	//		}
-	//	}
-	//	return eng;
-	//}
+	
 
 public:
 	void key_gen() override
@@ -1809,15 +1783,7 @@ int main()
 		cout << "Incorrect option" << endl;
 	}
 	
-	//string t = "Omae wa";
-	//string m = "Mao";
-	//ofstream file("1.txt");
-	//file << t;
-	//file << endl;
-	//file << "";
-	//file << endl;
-	//file << m;
-	//file.close();
+	
 
 	
 
